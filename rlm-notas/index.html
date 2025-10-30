@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RLM Tecnologia - Sistema de Gerenciamento de Notas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="screen active">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <img src="https://pplx-res.cloudinary.com/image/upload/v1761827728/pplx_project_search_images/da490de43a704cc4e35c775dca59cd4af8180563.png" alt="RLM Tecnologia" class="auth-logo">
+                    <h1>RLM</h1>
+                    <p>SISTEMAS E TECNOLOGIA</p>
+                </div>
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="showLoginForm()">Entrar</button>
+                    <button class="auth-tab" onclick="showRegisterForm()">Criar Conta</button>
+                </div>
+                
+                <!-- Formulário de Login -->
+                <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">Entrar</button>
+                    <p class="auth-hint">Use: admin@rlmtec.com / 123456</p>
+                </form>
+                
+                <!-- Formulário de Registro -->
+                <form id="registerForm" class="auth-form hidden" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="registerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="registerPassword" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirmar Senha</label>
+                        <input type="password" class="form-control" id="registerConfirmPassword" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">Criar Conta</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Principal -->
+    <div id="dashboardScreen" class="screen">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="header-brand">
+                    <img src="https://pplx-res.cloudinary.com/image/upload/v1761827728/pplx_project_search_images/da490de43a704cc4e35c775dca59cd4af8180563.png" alt="RLM" class="header-logo">
+                    <h1>RLM Tecnologia - Gerenciamento de Notas</h1>
+                </div>
+                <div class="header-actions">
+                    <span class="user-info" id="userInfo"></span>
+                    <button class="btn btn--outline-white btn--sm" onclick="handleLogout()">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <div class="dashboard-toolbar">
+                <button class="btn btn--primary" onclick="showNewTicketForm()">
+                    <span>+ Nova Nota</span>
+                </button>
+                <div class="search-container">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar por número ou título..." oninput="handleSearch()">
+                </div>
+                <button class="btn btn--secondary" onclick="showFilters()">
+                    <span>Filtros</span>
+                </button>
+                <button class="btn btn--secondary" onclick="showHistory()">
+                    <span>Histórico</span>
+                </button>
+            </div>
+
+            <!-- Filtros -->
+            <div id="filtersPanel" class="filters-panel hidden">
+                <div class="filters-grid">
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Serviço</label>
+                        <select class="form-control" id="filterTipo" onchange="applyFilters()">
+                            <option value="">Todos</option>
+                            <option value="Manutenção Preventiva">Manutenção Preventiva</option>
+                            <option value="Reparo de Equipamentos">Reparo de Equipamentos</option>
+                            <option value="Instalação de Sistemas">Instalação de Sistemas</option>
+                            <option value="Consultoria Técnica">Consultoria Técnica</option>
+                            <option value="Suporte Remoto">Suporte Remoto</option>
+                            <option value="Inspeção Técnica">Inspeção Técnica</option>
+                            <option value="Análise de Sistemas">Análise de Sistemas</option>
+                            <option value="Treinamento">Treinamento</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Prioridade</label>
+                        <select class="form-control" id="filterPrioridade" onchange="applyFilters()">
+                            <option value="">Todas</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Média">Média</option>
+                            <option value="Baixa">Baixa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cliente</label>
+                        <input type="text" class="form-control" id="filterCliente" oninput="applyFilters()" placeholder="Nome do cliente">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data Inicial</label>
+                        <input type="date" class="form-control" id="filterDataInicial" onchange="applyFilters()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data Final</label>
+                        <input type="date" class="form-control" id="filterDataFinal" onchange="applyFilters()">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn--secondary btn--full-width" onclick="clearFilters()">Limpar Filtros</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tickets-columns">
+                <div class="tickets-column">
+                    <div class="column-header">
+                        <h2>Notas Abertas</h2>
+                        <span class="badge" id="openCount">0</span>
+                    </div>
+                    <div class="tickets-list" id="openTickets"></div>
+                </div>
+                <div class="tickets-column">
+                    <div class="column-header">
+                        <h2>Notas Finalizadas</h2>
+                        <span class="badge" id="closedCount">0</span>
+                    </div>
+                    <div class="tickets-list" id="closedTickets"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário de Novo Chamado -->
+    <div id="newTicketScreen" class="screen">
+        <div class="form-screen-container">
+            <div class="form-screen-header">
+                <button class="btn btn--outline btn--sm" onclick="showDashboard()">&larr; Voltar</button>
+                <h2 id="formTitle">Nova Nota</h2>
+            </div>
+            <form id="ticketForm" class="ticket-form" onsubmit="handleTicketSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Título da Nota *</label>
+                        <input type="text" class="form-control" id="ticketTitulo" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Serviço *</label>
+                        <select class="form-control" id="ticketTipo" required>
+                            <option value="">Selecione...</option>
+                            <option value="Manutenção Preventiva">Manutenção Preventiva</option>
+                            <option value="Reparo de Equipamentos">Reparo de Equipamentos</option>
+                            <option value="Instalação de Sistemas">Instalação de Sistemas</option>
+                            <option value="Consultoria Técnica">Consultoria Técnica</option>
+                            <option value="Suporte Remoto">Suporte Remoto</option>
+                            <option value="Inspeção Técnica">Inspeção Técnica</option>
+                            <option value="Análise de Sistemas">Análise de Sistemas</option>
+                            <option value="Treinamento">Treinamento</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Prioridade *</label>
+                        <select class="form-control" id="ticketPrioridade" required>
+                            <option value="">Selecione...</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Média">Média</option>
+                            <option value="Baixa">Baixa</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Descrição *</label>
+                        <textarea class="form-control" id="ticketDescricao" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nome do Cliente *</label>
+                        <input type="text" class="form-control" id="ticketCliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Telefone *</label>
+                        <input type="tel" class="form-control" id="ticketTelefone" required placeholder="(00) 00000-0000">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Endereço *</label>
+                        <input type="text" class="form-control" id="ticketEndereco" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data de Prazo *</label>
+                        <input type="date" class="form-control" id="ticketPrazo" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn--outline" onclick="showDashboard()">Cancelar</button>
+                    <button type="submit" class="btn btn--primary">Salvar Nota</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Visualização Detalhada do Chamado -->
+    <div id="ticketDetailScreen" class="screen">
+        <div class="form-screen-container">
+            <div class="form-screen-header">
+                <button class="btn btn--outline btn--sm" onclick="showDashboard()">&larr; Voltar</button>
+                <h2>Detalhes da Nota</h2>
+            </div>
+            <div class="ticket-detail" id="ticketDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- Histórico de Chamados -->
+    <div id="historyScreen" class="screen">
+        <div class="form-screen-container">
+            <div class="form-screen-header">
+                <button class="btn btn--outline btn--sm" onclick="showDashboard()">&larr; Voltar</button>
+                <h2>Histórico de Notas</h2>
+            </div>
+            <div class="history-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalTickets">0</div>
+                    <div class="stat-label">Total de Notas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="openTicketsCount">0</div>
+                    <div class="stat-label">Abertos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="closedTicketsCount">0</div>
+                    <div class="stat-label">Finalizados</div>
+                </div>
+            </div>
+            <div class="history-table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Cliente</th>
+                            <th>Tipo</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th>Data Criação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
